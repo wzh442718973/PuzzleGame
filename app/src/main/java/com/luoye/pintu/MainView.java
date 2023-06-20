@@ -30,10 +30,9 @@ public class MainView extends View {
     private Bitmap[] bitmapTiles;
     private int[][] dataTiles;
     private Board tilesBoard;
-    private final int COL = 3;
-    private final int ROW = 3;
-    private int[][] dir = {
-            {-1, 0},//左
+    private final int COL;// = 3;
+    private final int ROW;// = 3;
+    private int[][] dir = {{-1, 0},//左
             {0, -1},//上
             {1, 0},//右
             {0, 1}//下
@@ -42,12 +41,13 @@ public class MainView extends View {
 
     int steps = 0;
 
-    public MainView(Context context) {
+    public MainView(Context context, int block) {
         super(context);
         this.context = context;
+        COL = ROW = block;
         paint = new Paint();
         paint.setAntiAlias(true);
-        init();
+        init(true);
         startGame();
         MLog.d(TAG, MainActivity.getScreenWidth() + "," + MainActivity.getScreenHeight());
     }
@@ -55,11 +55,12 @@ public class MainView extends View {
     /**
      * 初始化
      */
-    private void init() {
+    private void init(boolean first) {
         //载入图像，并将图片切成块
         AssetManager assetManager = context.getAssets();
         try {
-            InputStream assetInputStream = assetManager.open("back.jpg");
+            String name = ((MainActivity) context).next_file(first ? 0 : 1);
+            InputStream assetInputStream = assetManager.open(name);
             Bitmap bitmap = BitmapFactory.decodeStream(assetInputStream);
             back = Bitmap.createScaledBitmap(bitmap, MainActivity.getScreenWidth(), MainActivity.getScreenHeight(), true);
         } catch (IOException e) {
@@ -89,12 +90,12 @@ public class MainView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.GRAY);
+        int color = getResources().getColor(R.color.background);
+        canvas.drawColor(color);//Color.GRAY);
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
                 int idx = dataTiles[i][j];
-                if (idx == ROW * COL - 1 && !isSuccess)
-                    continue;
+                if (idx == ROW * COL - 1 && !isSuccess) continue;
                 canvas.drawBitmap(bitmapTiles[idx], j * tileWidth, i * tileHeight, paint);
             }
         }
@@ -135,25 +136,19 @@ public class MainView extends View {
                         if (tilesBoard.isSuccess(dataTiles)) {
                             isSuccess = true;
                             invalidate();
-                            String successText = String.format("恭喜你拼图成功，移动了%d次", steps);
-                            new AlertDialog.Builder(context)
-                                    .setTitle("拼图成功")
-                                    .setCancelable(false)
-                                    .setMessage(successText)
-                                    .setPositiveButton("重新开始", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            startGame();
-                                        }
-                                    })
-                                    .setNegativeButton("退出游戏", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            System.exit(0);
-                                        }
-                                    })
-                                    .create()
-                                    .show();
+                            String successText = String.format("Congratulations, you have moved %d times", steps);
+                            new AlertDialog.Builder(context).setTitle("Challenge Success").setCancelable(false).setMessage(successText).setPositiveButton("restart.", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    init(false);
+                                    startGame();
+                                }
+                            }).setNegativeButton("exit game?", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    System.exit(0);
+                                }
+                            }).create().show();
                         }
                     }
                 }
