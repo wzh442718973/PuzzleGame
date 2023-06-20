@@ -5,15 +5,15 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.luoye.pintu"
+        applicationId "com.phosphorescent.fluorescent"
         minSdkVersion 17
         targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 1555
+        versionName "1.5.5"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

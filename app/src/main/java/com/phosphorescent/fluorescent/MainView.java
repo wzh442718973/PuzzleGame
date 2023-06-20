@@ -1,4 +1,4 @@
-package com.luoye.pintu;
+package com.phosphorescent.fluorescent;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.luoye.pintu.util.MLog;
+import com.phosphorescent.fluorescent.util.MLog;
 
 import java.io.IOException;
 import java.io.InputStream;
